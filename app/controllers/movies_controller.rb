@@ -9,10 +9,10 @@ class MoviesController < ApplicationController
 
   def index
     #@movies = Movie.all
-    @movies = Movie.order (sort_column + " " + sort_direction)
+    @movies = Movie.order(sort_column + " " + sort_direction).filter(filter_selection)
     @all_ratings = Movie.all_ratings
     @selected_ratings = (params[:ratings].present? ? params[:ratings] : [])
-    
+    session[:p] = params
   end
 
   def new
@@ -22,7 +22,7 @@ class MoviesController < ApplicationController
   def create
     @movie = Movie.create!(params[:movie])
     flash[:notice] = "#{@movie.title} was successfully created."
-    redirect_to movies_path
+    redirect_to movies_path (session[:p])
   end
 
   def edit
@@ -40,7 +40,7 @@ class MoviesController < ApplicationController
     @movie = Movie.find(params[:id])
     @movie.destroy
     flash[:notice] = "Movie '#{@movie.title}' deleted."
-    redirect_to movies_path
+    redirect_to movies_path (session[:p])
   end
   
   private
